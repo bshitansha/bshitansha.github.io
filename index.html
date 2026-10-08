@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon | Shitansha Baral</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts for JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;300;400&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex items-center justify-center p-6 select-none overflow-hidden">
+
+    <!-- Centered Timer Grid -->
+    <main class="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-12 md:gap-16 text-center max-w-4xl w-full">
+        <!-- Days -->
+        <div class="flex flex-col items-center">
+            <span id="days" class="text-5xl sm:text-7xl md:text-8xl font-extralight tracking-tight">30</span>
+            <span class="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-500 mt-3 font-light">Days</span>
+        </div>
+        <!-- Hours -->
+        <div class="flex flex-col items-center">
+            <span id="hours" class="text-5xl sm:text-7xl md:text-8xl font-extralight tracking-tight">00</span>
+            <span class="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-500 mt-3 font-light">Hours</span>
+        </div>
+        <!-- Minutes -->
+        <div class="flex flex-col items-center">
+            <span id="minutes" class="text-5xl sm:text-7xl md:text-8xl font-extralight tracking-tight">00</span>
+            <span class="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-500 mt-3 font-light">Minutes</span>
+        </div>
+        <!-- Seconds -->
+        <div class="flex flex-col items-center">
+            <span id="seconds" class="text-5xl sm:text-7xl md:text-8xl font-extralight tracking-tight">00</span>
+            <span class="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-neutral-500 mt-3 font-light">Seconds</span>
+        </div>
+    </main>
+
+    <script>
+        // Calculate target timestamp (30 days from first visit) or retrieve existing from localStorage
+        let targetTimestamp = localStorage.getItem('ultraMinimalTimerTarget');
+
+        if (!targetTimestamp) {
+            const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+            targetTimestamp = Date.now() + thirtyDaysInMs;
+            localStorage.setItem('ultraMinimalTimerTarget', targetTimestamp);
+        } else {
+            targetTimestamp = parseInt(targetTimestamp, 10);
+        }
+
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        // Helper to format numbers with leading zero
+        function padZero(num) {
+            return num < 10 ? `0${num}` : `${num}`;
+        }
+
+        function updateTimer() {
+            const now = Date.now();
+            const timeDifference = targetTimestamp - now;
+
+            if (timeDifference <= 0) {
+                daysEl.textContent = "00";
+                hoursEl.textContent = "00";
+                minutesEl.textContent = "00";
+                secondsEl.textContent = "00";
+                return;
+            }
+
+            const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+            daysEl.textContent = padZero(days);
+            hoursEl.textContent = padZero(hours);
+            minutesEl.textContent = padZero(minutes);
+            secondsEl.textContent = padZero(seconds);
+        }
+
+        // Start timer update loop
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
